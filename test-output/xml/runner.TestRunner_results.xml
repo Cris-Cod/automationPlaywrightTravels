@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="playwrigthTravels"
+           tests="1"
+           failures="1"
+           errors="0"
+           skipped="0"
+           time="0,190">
+    <properties></properties>
+
+            <testcase
+                name="runScenario"
+                time="0,190"
+                classname="runner.TestRunner">
+
+            <failure type="io.cucumber.java.PendingException" message="TODO: implement me">
+                <![CDATA[io.cucumber.java.PendingException: TODO: implement me
+                stepDefinitions.SearchFlightsSteps.the_user_is_on_the_flight_page(SearchFlightsSteps.java:10)✽.the user is on the flight page(file:///C:/Users/USER/IdeaProjects/playwrigthTravels/src/test/java/features/SearchFlights.feature:4)
+]]>
+            </failure>
+    </testcase>
+
+
+</testsuite>
