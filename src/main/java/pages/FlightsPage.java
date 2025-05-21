@@ -3,6 +3,7 @@ package pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FlightsPage {
@@ -23,8 +24,9 @@ public class FlightsPage {
     private String btnGoingTo = "//button[@aria-label='Going to']";
     private String inputgoingTo = "#destination_select";
     private String btnDates = "//button[@data-testid='uitk-date-selector-input1-default']";
-    private String dateMonth = "(//span[@class='uitk-align-center uitk-month-label'])[1]";
-    private String list_days = "//tbody[@class='uitk-day-wrap']/tr/td";
+    private String dateMonth = "//span[@class='uitk-align-center uitk-month-label']";
+    private String list_days_left = "//div[@class='uitk-month uitk-month-double uitk-month-double-left']/table/tbody/tr/td";
+    private String list_days_right = "//div[@class='uitk-month uitk-month-double uitk-month-double-right']/table/tbody/tr/td";
     private String btn_next_calendar = "//button[@data-stid='uitk-calendar-navigation-controls-next-button']";
     private String btn_previous_calendar = "//button[@data-stid='uitk-calendar-navigation-controls-previous-button']";
     private String btnDone = "//button[@data-stid='apply-date-selector']";
@@ -33,6 +35,8 @@ public class FlightsPage {
     private String btnAdultsMax = "(//div[@class='uitk-layout-flex uitk-layout-flex-item uitk-step-input-controls'])[1]/button[2]";
     private String btnChildrenMinus = "(//div[@class='uitk-layout-flex uitk-layout-flex-item uitk-step-input-controls'])[2]/button[1]";
     private String btnChildrenNax = "(//div[@class='uitk-layout-flex uitk-layout-flex-item uitk-step-input-controls'])[2]/button[2]";
+    private String ageChild_1 = "#age-traveler_selector_children_age_selector-0";
+    private String ageChild_2 = "#age-traveler_selector_children_age_selector-1";
     private String btnDoneTraveler = "#travelers_selector_done_button";
     private String btnSearch = "#search_button";
 
@@ -78,18 +82,29 @@ public class FlightsPage {
 
     public void selectDateFrom(String monthFrom, String dateFrom) {
         page.locator(btnDates).click();
-        String month = page.locator(dateMonth).textContent();
-        Locator allDays = page.locator(list_days);
+        Locator allMonths = page.locator(dateMonth);
+        List<String> nameMonths = allMonths.allInnerTexts();
+        Locator allDays = page.locator(list_days_left);
         List<String> nameDays = allDays.allInnerTexts();
+        boolean monthfound = false;
 
-        while (!month.equalsIgnoreCase(monthFrom)) {
-            page.locator(btn_next_calendar).click();
-            month = page.locator(dateMonth).textContent();
+        while (!monthfound){
+            for (String months: nameMonths){
+                if(months.equalsIgnoreCase(monthFrom)){
+                    monthfound = true;
+                    break;
+                }
+            }
+
+            if(!monthfound){
+                page.locator(btn_next_calendar).click();
+                page.waitForTimeout(300);
+            }
         }
 
-        for (int i = 0; i < nameDays.size(); i++) {
-            if (nameDays.get(i).equalsIgnoreCase(dateFrom)) {
-                allDays.nth(i).click();
+        for (int j = 0; j < nameDays.size(); j++) {
+            if (nameDays.get(j).equalsIgnoreCase(dateFrom)) {
+                allDays.nth(j).click();
                 break;
             }
         }
@@ -97,19 +112,30 @@ public class FlightsPage {
     }
 
     public void selectDateTo(String monthTo, String dateTo){
-        page.locator(btnDates).click();
-        String month = page.locator(dateMonth).textContent();
-        Locator allDays = page.locator(list_days);
+        Locator allMonths = page.locator(dateMonth);
+        List<String> nameMonths = allMonths.allInnerTexts();
+        Locator allDays = page.locator(list_days_right);
         List<String> nameDays = allDays.allInnerTexts();
 
-        while (!month.equalsIgnoreCase(monthTo)) {
-            page.locator(btn_next_calendar).click();
-            month = page.locator(dateMonth).textContent();
+        boolean monthfound = false;
+
+        while (!monthfound){
+            for (String months: nameMonths){
+                if(months.equalsIgnoreCase(monthTo)){
+                    monthfound = true;
+                    break;
+                }
+            }
+
+            if(!monthfound){
+                page.locator(btn_next_calendar).click();
+                page.waitForTimeout(300);
+            }
         }
 
-        for (int i = 0; i < nameDays.size(); i++) {
-            if (nameDays.get(i).equalsIgnoreCase(dateTo)) {
-                allDays.nth(i).click();
+        for (int j = 0; j < nameDays.size(); j++) {
+            if (nameDays.get(j).equalsIgnoreCase(dateTo)) {
+                allDays.nth(j).click();
                 break;
             }
         }
@@ -117,19 +143,28 @@ public class FlightsPage {
         page.locator(btnDone).click();
     }
 
-    public void selectTravelers(int amountAdults, int amountChildren){
+    public void selectTravelers(int amountAdults, int amountChildren, String age1, String age2){
         page.locator(btnTraveler).click();
 
         int numAdults = 1;
         int numChildren = 0;
 
-        while (numAdults != amountAdults){
+        while (numAdults < amountAdults){
             page.locator(btnAdultsMax).click();
+            numAdults++;
+
         }
 
-        while (numChildren != amountChildren){
+        while (numChildren < amountChildren){
             page.locator(btnChildrenNax).click();
+            numChildren++;
         }
+
+        Locator ageChild1 = page.locator(ageChild_1);
+        ageChild1.selectOption(age1);
+
+        Locator ageChild2 = page.locator(ageChild_2);
+        ageChild2.selectOption(age2);
 
         page.locator(btnDoneTraveler).click();
 

@@ -31,7 +31,7 @@ public class BaseTest {
         System.out.println("Browser name: " + browserName + " Version: " + browser.version());
 
         page = browser.newPage();
-        page.navigate(url, new Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE));
+        page.navigate(url, new Page.NavigateOptions().setWaitUntil(WaitUntilState.LOAD));
     }
 
     public void closePage(){
